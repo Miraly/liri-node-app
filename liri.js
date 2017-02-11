@@ -5,17 +5,16 @@ var fs = require('fs');
 
 //what to search
 function taskMultiplexer(task, param) {
-  console.log(param);
-   if (task === 'my-tweets') {
-    getTweets();
+  if (task === 'my-tweets') {
+      getTweets();
 
    } else if (task === 'spotify-this-song') {
-        (param == null) ? defaultSong() : getSong();
+      (param == null) ? defaultSong() : getSong(param);
 
    } else if (task === 'movie-this') {
       if (param == null) {
        param = 'Mr Nobody';
-      } else { getMovie(); }
+      } else { getMovie(param); }
       
    } else if (task == 'do-what-it-says') {
     doWhatItSays();
@@ -49,8 +48,8 @@ function getTweets() {
 }
 
 //spotify
-function getSong() {
- spotify.search({ type: 'track', query: param }, function(err, data) {
+function getSong(song) {
+ spotify.search({ type: 'track', query: song }, function(err, data) {
      if ( err ) {
          console.log('Error occurred: ' + err);
          return;
@@ -84,8 +83,8 @@ function defaultSong() {
 }
 
 //omdb movie
-function getMovie() {
- var queryUrl = "http://www.omdbapi.com/?t=" + param + "&y=&plot=short&r=json&tomatoes=true";
+function getMovie(movieName) {
+ var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&r=json&tomatoes=true";
  request(queryUrl, function(error, response, body) {
 
    // If the request was successful...
@@ -110,13 +109,13 @@ function getMovie() {
 //fs taking info from the text document and runs the command 
 function doWhatItSays() {
    var command = [];
-   fs.readFile('./random.txt', "utf8",  function read(err, data) {
-      if (err) {
-       throw err;
-      }
+       fs.readFile('./random.txt', "utf8",  function read(err, data) {
+          if (err) {
+           throw err;
+          }
 
-    command = data.split(',');    
-      });
-  
-   taskMultiplexer(command[0], command[1]);
+          command = data.split(',');    
+          taskMultiplexer(command[0], command[1]);
+        });
+   
 }
